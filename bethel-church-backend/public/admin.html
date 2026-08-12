@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bethel Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --veil:#2b1b3d; --veil-2:#3c2854;
+    --sage:#7fa68c; --sage-light:#a9c7b0;
+    --blush:#d98e86;
+    --linen:#f2eee4; --linen-line:#ddd6c8;
+    --ink:#241a30; --ink-soft:#6c5f74;
+    --cream:#e8e2d3;
+    --radius:12px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Inter',sans-serif; background:var(--linen); color:var(--ink); min-height:100vh;}
+  h1,h2{font-family:'Cormorant Garamond',serif; font-weight:700;}
+
+  #loginView{
+    min-height:100vh; display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(160deg,var(--veil),var(--veil-2)); padding:20px;
+  }
+  .login-card{
+    background:rgba(255,255,255,0.04); border:1px solid rgba(127,166,140,0.3); border-radius:16px;
+    padding:40px 36px; width:100%; max-width:360px; color:var(--cream);
+  }
+  .login-card h1{font-size:1.5rem; margin-bottom:6px;}
+  .login-card p{font-size:0.88rem; color:rgba(242,238,228,0.6); margin-bottom:26px;}
+  .login-card label{display:block; font-family:'JetBrains Mono',monospace; font-size:0.7rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--sage-light); margin-bottom:6px;}
+  .login-card input{
+    width:100%; padding:12px 14px; margin-bottom:18px; border-radius:8px; border:1px solid rgba(242,238,228,0.2);
+    background:rgba(255,255,255,0.05); color:var(--cream); font-size:0.95rem;
+  }
+  .login-card input:focus{outline:none; border-color:var(--sage);}
+  .login-card button{
+    width:100%; padding:13px; border:none; border-radius:999px;
+    background:linear-gradient(135deg,var(--sage-light),var(--sage)); color:var(--veil); font-weight:700; font-size:0.95rem; cursor:pointer;
+  }
+  #loginError{margin-top:14px; font-size:0.85rem; color:#c0665e; min-height:1.2em;}
+
+  #dashboardView{display:none;}
+  header{background:var(--veil); color:var(--cream); padding:20px 32px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;}
+  header h1{font-size:1.2rem;}
+  header .who{font-size:0.85rem; color:rgba(242,238,228,0.6);}
+  #logoutBtn{background:none; border:1px solid rgba(242,238,228,0.3); color:var(--cream); padding:8px 18px; border-radius:999px; font-size:0.85rem; cursor:pointer;}
+  #logoutBtn:hover{border-color:var(--sage);}
+
+  .tabs{display:flex; gap:8px; padding:20px 32px 0; background:var(--linen); border-bottom:1px solid var(--linen-line);}
+  .tab-btn{
+    background:none; border:none; padding:12px 20px; font-size:0.9rem; font-weight:600; color:var(--ink-soft);
+    cursor:pointer; border-bottom:2px solid transparent;
+  }
+  .tab-btn.active{color:var(--ink); border-bottom-color:var(--sage);}
+
+  main{padding:32px;}
+  .tab-panel{display:none;}
+  .tab-panel.active{display:block;}
+  .toolbar{display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;}
+  .toolbar h2{font-size:1.4rem;}
+  #refreshBtn{background:#fff; border:1px solid var(--linen-line); padding:9px 18px; border-radius:999px; font-size:0.85rem; cursor:pointer; font-weight:600;}
+  #refreshBtn:hover{border-color:var(--sage);}
+
+  .empty-state{background:#fff; border:1px dashed var(--linen-line); border-radius:var(--radius); padding:50px 20px; text-align:center; color:var(--ink-soft);}
+
+  .item-list{display:grid; gap:14px;}
+  .item-card{
+    background:#fff; border:1px solid var(--linen-line); border-radius:var(--radius); padding:20px 24px;
+    display:grid; grid-template-columns:1fr auto; gap:16px; align-items:start;
+  }
+  .item-card .name{font-size:1.05rem; font-weight:700; margin-bottom:2px;}
+  .item-card .meta{font-size:0.85rem; color:var(--ink-soft); margin-bottom:10px;}
+  .item-card .meta a{color:var(--blush); text-decoration:none;}
+  .item-card .message{font-size:0.9rem; color:var(--ink); background:var(--cream); padding:10px 14px; border-radius:8px; margin-top:6px;}
+  .amount-tag{font-family:'JetBrains Mono',monospace; font-size:1.1rem; font-weight:600; color:var(--sage);}
+  .actions{display:flex; flex-direction:column; gap:8px; align-items:flex-end;}
+  .actions select{padding:8px 10px; border-radius:8px; border:1px solid var(--linen-line); font-size:0.85rem;}
+  .actions button.delete{background:none; border:none; color:#a33; font-size:0.8rem; cursor:pointer; text-decoration:underline;}
+  .timestamp{font-size:0.78rem; color:var(--ink-soft); white-space:nowrap;}
+
+  @media (max-width:640px){
+    .item-card{grid-template-columns:1fr;}
+    .actions{flex-direction:row; align-items:center;}
+  }
+
+  .upload-box{
+    background:#fff; border:1px solid var(--linen-line); border-radius:var(--radius);
+    padding:24px; margin-bottom:28px;
+  }
+  .upload-box h3{font-size:1.1rem; margin-bottom:16px;}
+  .upload-box label{display:block; font-family:'JetBrains Mono',monospace; font-size:0.7rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:6px;}
+  .upload-box input[type="text"], .upload-box input[type="file"]{
+    width:100%; padding:11px 14px; margin-bottom:16px; border-radius:8px; border:1px solid var(--linen-line);
+    font-size:0.92rem; background:var(--linen);
+  }
+  .upload-box input[type="text"]:focus{outline:none; border-color:var(--sage);}
+  .upload-box button{
+    padding:11px 24px; border:none; border-radius:999px;
+    background:linear-gradient(135deg,var(--sage-light),var(--sage)); color:var(--veil); font-weight:700; font-size:0.9rem; cursor:pointer;
+  }
+  .upload-box button:disabled{opacity:0.6; cursor:default;}
+  #galleryUploadStatus{margin-top:12px; font-size:0.85rem; color:var(--ink-soft); min-height:1.2em;}
+
+  .album-block{margin-bottom:28px;}
+  .album-block h3{font-size:1.05rem; margin-bottom:12px; display:flex; align-items:center; gap:10px;}
+  .album-block h3 .n{font-family:'JetBrains Mono',monospace; font-size:0.75rem; color:var(--ink-soft); font-weight:400;}
+  .thumb-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:12px;}
+  .thumb{
+    position:relative; aspect-ratio:1; border-radius:8px; overflow:hidden;
+    background-size:cover; background-position:center; border:1px solid var(--linen-line);
+  }
+  .thumb .thumb-delete{
+    position:absolute; top:6px; right:6px; width:26px; height:26px; border-radius:50%;
+    background:rgba(36,26,48,0.75); color:#fff; border:none; font-size:0.9rem; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .thumb .thumb-delete:hover{background:#a33;}
+
+  .item-photo{width:56px; height:56px; border-radius:8px; background-size:cover; background-position:center; flex-shrink:0; border:1px solid var(--linen-line);}
+  .item-card.with-photo{grid-template-columns:auto 1fr auto;}
+</style>
+</head>
+<body>
+
+<div id="loginView">
+  <div class="login-card">
+    <h1>Bethel Admin</h1>
+    <p>Log in to view prayer requests and giving.</p>
+    <form id="loginForm">
+      <label for="username">Username</label>
+      <input type="text" id="username" autocomplete="username" required>
+      <label for="password">Password</label>
+      <input type="password" id="password" autocomplete="current-password" required>
+      <button type="submit">Log in</button>
+      <p id="loginError"></p>
+    </form>
+  </div>
+</div>
+
+<div id="dashboardView">
+  <header>
+    <h1>Bethel Admin</h1>
+    <div style="display:flex; align-items:center; gap:16px;">
+      <span class="who" id="whoAmI"></span>
+      <button id="logoutBtn">Log out</button>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="prayer">Prayer Requests</button>
+    <button class="tab-btn" data-tab="giving">Giving</button>
+    <button class="tab-btn" data-tab="gallery">Gallery</button>
+    <button class="tab-btn" data-tab="sermons">Sermons</button>
+    <button class="tab-btn" data-tab="events">Events</button>
+    <button class="tab-btn" data-tab="pastors">Pastors</button>
+    <button class="tab-btn" data-tab="ministries">Ministries</button>
+    <button class="tab-btn" data-tab="settings">Settings</button>
+  </div>
+
+  <main>
+    <div class="tab-panel active" id="prayerPanel">
+      <div class="toolbar">
+        <h2 id="prayerCount">Prayer Requests</h2>
+        <button id="refreshPrayerBtn">Refresh</button>
+      </div>
+      <div id="prayerList"></div>
+    </div>
+
+    <div class="tab-panel" id="givingPanel">
+      <div class="toolbar">
+        <h2 id="givingCount">Giving</h2>
+        <button id="refreshGivingBtn">Refresh</button>
+      </div>
+      <div id="givingList"></div>
+    </div>
+
+    <div class="tab-panel" id="galleryPanel">
+      <div class="toolbar">
+        <h2 id="galleryCount">Gallery</h2>
+        <button id="refreshGalleryBtn">Refresh</button>
+      </div>
+
+      <div class="upload-box">
+        <h3>Add photos</h3>
+        <label for="galleryAlbumInput">Album name</label>
+        <input type="text" id="galleryAlbumInput" list="albumSuggestions" placeholder="e.g. Sunday Worship, Youth Camp…">
+        <datalist id="albumSuggestions"></datalist>
+        <label for="galleryFileInput">Photos (select as many as you like — JPEG, PNG, or WEBP, up to 5MB each)</label>
+        <input type="file" id="galleryFileInput" accept="image/jpeg,image/png,image/webp" multiple>
+        <button id="galleryUploadBtn">Upload</button>
+        <p id="galleryUploadStatus"></p>
+      </div>
+
+      <div id="galleryAlbums"></div>
+    </div>
+
+    <div class="tab-panel" id="sermonsPanel">
+      <div class="toolbar">
+        <h2 id="sermonsCount">Sermons</h2>
+        <button id="refreshSermonsBtn">Refresh</button>
+      </div>
+
+      <div class="upload-box">
+        <h3 id="sermonFormTitle">Post a sermon</h3>
+        <label for="sermonTitleInput">Sermon title</label>
+        <input type="text" id="sermonTitleInput" placeholder="e.g. The God Who Sees">
+        <label for="sermonSeriesInput">Series (optional)</label>
+        <input type="text" id="sermonSeriesInput" placeholder="e.g. Walking in Purpose">
+        <label for="sermonSpeakerInput">Speaker</label>
+        <input type="text" id="sermonSpeakerInput" placeholder="e.g. Rev. Abraham Laryea">
+        <label for="sermonLocationInput">Location (optional)</label>
+        <input type="text" id="sermonLocationInput" placeholder="e.g. Sowutuom">
+        <label for="sermonVideoInput">Video link (YouTube or Facebook)</label>
+        <input type="text" id="sermonVideoInput" placeholder="https://youtube.com/watch?v=…">
+        <p style="text-align:center; color:var(--ink-soft); font-size:0.8rem; margin:-8px 0 14px;">— or —</p>
+        <label for="sermonVideoFileInput">Upload the video file directly (MP4, MOV, or WEBM — up to 1GB)</label>
+        <input type="file" id="sermonVideoFileInput" accept="video/mp4,video/quicktime,video/webm,video/x-m4v,video/3gpp,video/x-msvideo">
+        <label for="sermonThumbInput">Thumbnail image (optional)</label>
+        <input type="file" id="sermonThumbInput" accept="image/jpeg,image/png,image/webp">
+        <div style="display:flex; gap:10px; align-items:center;">
+          <button id="sermonSubmitBtn">Post sermon</button>
+          <button type="button" id="sermonCancelEditBtn" style="display:none; background:none; border:1px solid var(--linen-line); color:var(--ink-soft);">Cancel edit</button>
+        </div>
+        <p id="sermonFormStatus"></p>
+      </div>
+
+      <div id="sermonsList"></div>
+    </div>
+
+    <div class="tab-panel" id="eventsPanel">
+      <div class="toolbar">
+        <h2 id="eventsCount">Upcoming Events</h2>
+        <button id="refreshEventsBtn">Refresh</button>
+      </div>
+
+      <div class="upload-box">
+        <h3 id="eventFormTitle">Add an event</h3>
+        <label for="eventTitleInput">Event title</label>
+        <input type="text" id="eventTitleInput" placeholder="e.g. Youth Connect Night">
+        <label for="eventDescInput">Description (optional)</label>
+        <input type="text" id="eventDescInput" placeholder="e.g. Games, worship, and real conversation">
+        <label for="eventDateInput">Date</label>
+        <input type="date" id="eventDateInput">
+        <label for="eventLocationInput">Location (optional)</label>
+        <input type="text" id="eventLocationInput" placeholder="e.g. Sowutuom">
+        <div style="display:flex; gap:10px; align-items:center;">
+          <button id="eventSubmitBtn">Add event</button>
+          <button type="button" id="eventCancelEditBtn" style="display:none; background:none; border:1px solid var(--linen-line); color:var(--ink-soft);">Cancel edit</button>
+        </div>
+        <p id="eventFormStatus"></p>
+      </div>
+
+      <div id="eventsList"></div>
+    </div>
+
+    <div class="tab-panel" id="pastorsPanel">
+      <div class="toolbar">
+        <h2 id="pastorsCount">Meet Our Pastors</h2>
+        <button id="refreshPastorsBtn">Refresh</button>
+      </div>
+
+      <div class="upload-box">
+        <h3 id="pastorFormTitle">Add a pastor</h3>
+        <label for="pastorNameInput">Name</label>
+        <input type="text" id="pastorNameInput" placeholder="e.g. Rev. Abraham Laryea">
+        <label for="pastorRoleInput">Role</label>
+        <input type="text" id="pastorRoleInput" placeholder="e.g. Senior Pastor · Sowutuom">
+        <label for="pastorBioInput">Short bio (optional)</label>
+        <input type="text" id="pastorBioInput" placeholder="A line or two about them">
+        <label for="pastorPhotoInput">Photo (optional)</label>
+        <input type="file" id="pastorPhotoInput" accept="image/jpeg,image/png,image/webp">
+        <div style="display:flex; gap:10px; align-items:center;">
+          <button id="pastorSubmitBtn">Add pastor</button>
+          <button type="button" id="pastorCancelEditBtn" style="display:none; background:none; border:1px solid var(--linen-line); color:var(--ink-soft);">Cancel edit</button>
+        </div>
+        <p id="pastorFormStatus"></p>
+      </div>
+
+      <div id="pastorsList"></div>
+    </div>
+
+    <div class="tab-panel" id="ministriesPanel">
+      <div class="toolbar">
+        <h2 id="ministriesCount">Ministries</h2>
+        <button id="refreshMinistriesBtn">Refresh</button>
+      </div>
+
+      <div class="upload-box">
+        <h3 id="ministryFormTitle">Add a ministry</h3>
+        <label for="ministryNameInput">Name</label>
+        <input type="text" id="ministryNameInput" placeholder="e.g. Youth Ministry">
+        <label for="ministryDescInput">Description (optional)</label>
+        <input type="text" id="ministryDescInput" placeholder="What this ministry is about">
+        <label for="ministryIconInput">Icon (a single emoji)</label>
+        <input type="text" id="ministryIconInput" placeholder="e.g. 🔥" maxlength="4">
+        <div style="display:flex; gap:10px; align-items:center;">
+          <button id="ministrySubmitBtn">Add ministry</button>
+          <button type="button" id="ministryCancelEditBtn" style="display:none; background:none; border:1px solid var(--linen-line); color:var(--ink-soft);">Cancel edit</button>
+        </div>
+        <p id="ministryFormStatus"></p>
+      </div>
+
+      <div id="ministriesList"></div>
+    </div>
+
+    <div class="tab-panel" id="settingsPanel">
+      <div class="toolbar">
+        <h2>Site Settings</h2>
+      </div>
+
+      <div class="upload-box">
+        <h3>Contact</h3>
+        <label for="settingsEmailInput">Church email</label>
+        <input type="text" id="settingsEmailInput" placeholder="e.g. betheldivinemysterychurch@gmail.com">
+        <label for="settingsPhoneInput">Phone (used for the tap-to-call link — include country code)</label>
+        <input type="text" id="settingsPhoneInput" placeholder="e.g. +233249382270">
+        <label for="settingsPhoneDisplayInput">Phone (how it's displayed on the site)</label>
+        <input type="text" id="settingsPhoneDisplayInput" placeholder="e.g. 024 938 2270">
+      </div>
+
+      <div class="upload-box">
+        <h3>Service Hours <span style="font-weight:400; font-size:0.8rem; color:var(--ink-soft);">(applies to both campuses)</span></h3>
+        <label for="settingsSundayInput">Sunday</label>
+        <input type="text" id="settingsSundayInput" placeholder="e.g. 8:30 – 11:30 AM">
+        <label for="settingsWednesdayInput">Wednesday</label>
+        <input type="text" id="settingsWednesdayInput" placeholder="e.g. 6:30 – 7:30 PM">
+        <label for="settingsFridayInput">Friday</label>
+        <input type="text" id="settingsFridayInput" placeholder="e.g. 6:30 – 7:30 PM">
+      </div>
+
+      <div class="upload-box">
+        <h3>Campuses</h3>
+        <label for="settingsCampus0NameInput">Campus 1 — name</label>
+        <input type="text" id="settingsCampus0NameInput" placeholder="e.g. Sowutuom">
+        <label for="settingsCampus0AddressInput">Campus 1 — address</label>
+        <input type="text" id="settingsCampus0AddressInput" placeholder="e.g. Sowutuom, Accra">
+        <label for="settingsCampus1NameInput">Campus 2 — name</label>
+        <input type="text" id="settingsCampus1NameInput" placeholder="e.g. Nsakina">
+        <label for="settingsCampus1AddressInput">Campus 2 — address</label>
+        <input type="text" id="settingsCampus1AddressInput" placeholder="e.g. Nsakina, Accra">
+      </div>
+
+      <div class="upload-box">
+        <h3>Social Media</h3>
+        <label for="settingsFacebookInput">Facebook</label>
+        <input type="text" id="settingsFacebookInput" placeholder="https://facebook.com/…">
+        <label for="settingsInstagramInput">Instagram</label>
+        <input type="text" id="settingsInstagramInput" placeholder="https://instagram.com/…">
+        <label for="settingsTiktokInput">TikTok</label>
+        <input type="text" id="settingsTiktokInput" placeholder="https://tiktok.com/…">
+        <label for="settingsYoutubeInput">YouTube</label>
+        <input type="text" id="settingsYoutubeInput" placeholder="https://youtube.com/@…">
+      </div>
+
+      <div class="upload-box">
+        <h3>Footer Tagline</h3>
+        <label for="settingsTaglineInput">Shown at the bottom of every page</label>
+        <input type="text" id="settingsTaglineInput" placeholder="e.g. Every mystery welcome. Every question honored.">
+      </div>
+
+      <button id="settingsSaveBtn">Save all settings</button>
+      <p id="settingsStatus"></p>
+    </div>
+  </main>
+</div>
+
+<script>
+  const loginView = document.getElementById('loginView');
+  const dashboardView = document.getElementById('dashboardView');
+  const loginForm = document.getElementById('loginForm');
+  const loginError = document.getElementById('loginError');
+  const whoAmI = document.getElementById('whoAmI');
+
+  function getToken(){ return localStorage.getItem('bethel_admin_token'); }
+  function getUsername(){ return localStorage.getItem('bethel_admin_username'); }
+  function saveSession(token, username){
+    localStorage.setItem('bethel_admin_token', token);
+    localStorage.setItem('bethel_admin_username', username);
+  }
+  function clearSession(){
+    localStorage.removeItem('bethel_admin_token');
+    localStorage.removeItem('bethel_admin_username');
+  }
+  function escapeHtml(str){
+    return String(str ?? '').replace(/[&<>"']/g, c => (
+      { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]
+    ));
+  }
+  function formatDate(iso){
+    try {
+      return new Date(iso).toLocaleString(undefined, { month:'short', day:'numeric', year:'numeric', hour:'numeric', minute:'2-digit' });
+    } catch { return iso; }
+  }
+
+  function showDashboard(){
+    loginView.style.display = 'none';
+    dashboardView.style.display = 'block';
+    whoAmI.textContent = 'Logged in as ' + (getUsername() || 'admin');
+    loadPrayerRequests();
+    loadGiving();
+    loadGalleryAdmin();
+    loadSermonsAdmin();
+    loadEventsAdmin();
+    loadPastorsAdmin();
+    loadMinistriesAdmin();
+    loadSettingsAdmin();
+  }
+  function showLogin(){
+    dashboardView.style.display = 'none';
+    loginView.style.display = 'flex';
+  }
+
+  loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    loginError.textContent = '';
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value;
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Login failed.');
+      saveSession(data.token, data.username);
+      loginForm.reset();
+      showDashboard();
+    } catch (err) {
+      loginError.textContent = err.message;
+    }
+  });
+
+  document.getElementById('logoutBtn').addEventListener('click', () => { clearSession(); showLogin(); });
+
+  // Tabs
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab + 'Panel').classList.add('active');
+    });
+  });
+
+  // ===== Prayer requests =====
+  async function loadPrayerRequests(){
+    const list = document.getElementById('prayerList');
+    list.innerHTML = '<p style="color:var(--ink-soft);">Loading…</p>';
+    try {
+      const res = await fetch('/api/prayer', { headers: { Authorization: 'Bearer ' + getToken() } });
+      if (res.status === 401) { clearSession(); showLogin(); return; }
+      const requests = await res.json();
+      renderPrayerRequests(requests);
+    } catch (err) {
+      list.innerHTML = '<p style="color:#a33;">Could not load prayer requests. Is the server running?</p>';
+    }
+  }
+
+  function renderPrayerRequests(requests){
+    document.getElementById('prayerCount').textContent = `Prayer Requests (${requests.length})`;
+    const list = document.getElementById('prayerList');
+    if (!requests.length) {
+      list.innerHTML = '<div class="empty-state">No prayer requests yet — they\'ll show up here as soon as someone submits the form.</div>';
+      return;
+    }
+    list.innerHTML = '<div class="item-list">' + requests.map(r => `
+      <div class="item-card" data-id="${r.id}">
+        <div>
+          <div class="name">${escapeHtml(r.name)}</div>
+          <div class="meta">${escapeHtml(r.contact)}</div>
+          <div class="message">${escapeHtml(r.message)}</div>
+          <div class="timestamp" style="margin-top:8px;">${formatDate(r.createdAt)}</div>
+        </div>
+        <div class="actions">
+          <select class="status-select">
+            ${['new','praying','followed-up','archived'].map(s => `<option value="${s}" ${s === r.status ? 'selected' : ''}>${s}</option>`).join('')}
+          </select>
+          <button class="delete">Delete</button>
+        </div>
+      </div>`).join('') + '</div>';
+
+    list.querySelectorAll('.status-select').forEach(select => {
+      select.addEventListener('change', async (e) => {
+        const id = e.target.closest('.item-card').dataset.id;
+        await fetch('/api/prayer/' + id, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + getToken() },
+          body: JSON.stringify({ status: e.target.value })
+        });
+      });
+    });
+    list.querySelectorAll('.delete').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        const card = e.target.closest('.item-card');
+        if (!confirm("Delete this prayer request? This can't be undone.")) return;
+        await fetch('/api/prayer/' + card.dataset.id, { method: 'DELETE', headers: { Authorization: 'Bearer ' + getToken() } });
+        loadPrayerRequests();
+      });
+    });
+  }
+
+  // ===== Giving =====
+  async function loadGiving(){
+    const list = document.getElementById('givingList');
+    list.innerHTML = '<p style="color:var(--ink-soft);">Loading…</p>';
+    try {
+      const res = await fetch('/api/give', { headers: { Authorization: 'Bearer ' + getToken() } });
+      if (res.status === 401) { clearSession(); showLogin(); return; }
+      const givings = await res.json();
+      renderGiving(givings);
+    } catch (err) {
+      list.innerHTML = '<p style="color:#a33;">Could not load giving records. Is the server running?</p>';
+    }
+  }
+
+  function renderGiving(givings){
+    document.getElementById('givingCount').textContent = `Giving (${givings.length})`;
+    const list = document.getElementById('givingList');
+    if (!givings.length) {
+      list.innerHTML = '<div class="empty-state">No gifts recorded yet — successful payments through Give Now will show up here.</div>';
+      return;
+    }
+    const total = givings.reduce((sum, g) => sum + g.amount, 0);
+    list.innerHTML = `<p style="margin-bottom:16px; color:var(--ink-soft); font-size:0.9rem;">Total received: <strong style="color:var(--ink);">₵${total.toLocaleString()}</strong></p>` +
+      '<div class="item-list">' + givings.map(g => `
+      <div class="item-card">
+        <div>
+          <div class="name">${escapeHtml(g.phone)}</div>
+          <div class="meta">${escapeHtml(g.reference)}</div>
+          ${g.note ? `<div class="message">${escapeHtml(g.note)}</div>` : ''}
+          <div class="timestamp" style="margin-top:8px;">${formatDate(g.givenAt)}</div>
+        </div>
+        <div class="actions">
+          <span class="amount-tag">₵${g.amount.toLocaleString()}</span>
+        </div>
+      </div>`).join('') + '</div>';
+  }
+
+  document.getElementById('refreshPrayerBtn').addEventListener('click', loadPrayerRequests);
+  document.getElementById('refreshGivingBtn').addEventListener('click', loadGiving);
+
+  // ===== Gallery =====
+  async function loadGalleryAdmin(){
+    const container = document.getElementById('galleryAlbums');
+    container.innerHTML = '<p style="color:var(--ink-soft);">Loading…</p>';
+    try {
+      const res = await fetch('/api/gallery');
+      const photos = await res.json();
+      renderGalleryAdmin(photos);
+    } catch (err) {
+      container.innerHTML = '<p style="color:#a33;">Could not load the gallery. Is the server running?</p>';
+    }
+  }
+
+  function renderGalleryAdmin(photos){
+    document.getElementById('galleryCount').textContent = `Gallery (${photos.length})`;
+    const container = document.getElementById('galleryAlbums');
+
+    // Group photos by caption/album, preserving first-seen order.
+    const albums = [];
+    const byCaption = {};
+    photos.forEach(p => {
+      const key = p.caption || 'Photos';
+      if (!byCaption[key]) { byCaption[key] = { caption: key, photos: [] }; albums.push(byCaption[key]); }
+      byCaption[key].photos.push(p);
+    });
+
+    // Keep the album-name suggestions up to date for the upload field.
+    document.getElementById('albumSuggestions').innerHTML =
+      albums.map(a => `<option value="${escapeHtml(a.caption)}">`).join('');
+
+    if (!albums.length) {
+      container.innerHTML = '<div class="empty-state">No photos yet — add your first album above.</div>';
+      return;
+    }
+
+    container.innerHTML = albums.map(album => `
+      <div class="album-block">
+        <h3>${escapeHtml(album.caption)} <span class="n">${album.photos.length} photo${album.photos.length === 1 ? '' : 's'}</span></h3>
+        <div class="thumb-grid">
+          ${album.photos.map(p => `
+            <div class="thumb" style="background-image:url('${escapeHtml(p.imageUrl)}');" data-id="${p.id}">
+              <button type="button" class="thumb-delete" title="Delete photo">&times;</button>
+            </div>`).join('')}
+        </div>
+      </div>`).join('');
+
+    container.querySelectorAll('.thumb-delete').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        const thumb = e.target.closest('.thumb');
+        if (!confirm("Delete this photo? This can't be undone.")) return;
+        await fetch('/api/gallery/' + thumb.dataset.id, { method: 'DELETE', headers: { Authorization: 'Bearer ' + getToken() } });
+        loadGalleryAdmin();
+      });
+    });
+  }
+
+  document.getElementById('galleryUploadBtn').addEventListener('click', async () => {
+    const albumInput = document.getElementById('galleryAlbumInput');
+    const fileInput = document.getElementById('galleryFileInput');
+    const status = document.getElementById('galleryUploadStatus');
+    const uploadBtn = document.getElementById('galleryUploadBtn');
+
+    const caption = albumInput.value.trim();
+    const files = Array.from(fileInput.files || []);
+
+    if (!caption) { status.style.color = '#a33'; status.textContent = 'Enter an album name first.'; return; }
+    if (!files.length) { status.style.color = '#a33'; status.textContent = 'Choose at least one photo.'; return; }
+
+    uploadBtn.disabled = true;
+    let uploaded = 0;
+    let failed = 0;
+
+    for (const file of files) {
+      status.style.color = 'var(--ink-soft)';
+      status.textContent = `Uploading ${uploaded + failed + 1} of ${files.length}…`;
+      try {
+        const formData = new FormData();
+        formData.append('photo', file);
+        formData.append('caption', caption);
+        const res = await fetch('/api/gallery', {
+          method: 'POST',
+          headers: { Authorization: 'Bearer ' + getToken() },
+          body: formData
+        });
+        if (!res.ok) throw new Error();
+        uploaded++;
+      } catch (err) {
+        failed++;
+      }
+    }
+
+    status.style.color = failed ? '#a33' : 'var(--sage)';
+    status.textContent = failed
+      ? `Uploaded ${uploaded} of ${files.length} — ${failed} failed (check file type/size and try again).`
+      : `Uploaded ${uploaded} photo${uploaded === 1 ? '' : 's'} to "${caption}".`;
+
+    uploadBtn.disabled = false;
+    fileInput.value = '';
+    loadGalleryAdmin();
+  });
+
+  document.getElementById('refreshGalleryBtn').addEventListener('click', loadGalleryAdmin);
+
+  // ===== Sermons =====
+  let editingSermonId = null;
+
+  async function loadSermonsAdmin(){
+    const list = document.getElementById('sermonsList');
+    list.innerHTML = '<p style="color:var(--ink-soft);">Loading…</p>';
+    try {
+      const res = await fetch('/api/sermons');
+      const sermons = await res.json();
+      renderSermonsAdmin(sermons);
+    } catch (err) {
+      list.innerHTML = '<p style="color:#a33;">Could not load sermons. Is the server running?</p>';
+    }
+  }
+
+  function renderSermonsAdmin(sermons){
+    document.getElementById('sermonsCount').textContent = `Sermons (${sermons.length})`;
+    const list = document.getElementById('sermonsList');
+    if (!sermons.length) {
+      list.innerHTML = '<div class="empty-state">No sermons posted yet — use the form above to add your first one.</div>';
+      return;
+    }
+    list.innerHTML = '<div class="item-list">' + sermons.map(s => `
+      <div class="item-card" data-id="${s.id}">
+        <div>
+          <div class="name">${escapeHtml(s.title)}</div>
+          <div class="meta">${escapeHtml(s.series)}${s.series ? ' · ' : ''}${escapeHtml(s.speaker)}${s.location ? ' · ' + escapeHtml(s.location) : ''}</div>
+          ${s.videoFileUrl ? `<div class="meta">🎥 Uploaded video file attached</div>` : ''}
+          ${s.videoUrl ? `<div class="meta"><a href="${escapeHtml(s.videoUrl)}" target="_blank" rel="noopener">${escapeHtml(s.videoUrl)}</a></div>` : ''}
+        </div>
+        <div class="actions">
+          <button class="edit-sermon" style="background:none; border:none; color:var(--sage); font-size:0.8rem; cursor:pointer; text-decoration:underline;">Edit</button>
+          <button class="delete delete-sermon">Delete</button>
+        </div>
+      </div>`).join('') + '</div>';
+
+    list.querySelectorAll('.edit-sermon').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const id = e.target.closest('.item-card').dataset.id;
+        const sermon = sermons.find(s => s.id === id);
+        startEditSermon(sermon);
+      });
+    });
+    list.querySelectorAll('.delete-sermon').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        const id = e.target.closest('.item-card').dataset.id;
+        if (!confirm("Delete this sermon? This can't be undone.")) return;
+        await fetch('/api/sermons/' + id, { method: 'DELETE', headers: { Authorization: 'Bearer ' + getToken() } });
+        if (editingSermonId === id) cancelEditSermon();
+        loadSermonsAdmin();
+      });
+    });
+  }
+
+  function startEditSermon(sermon){
+    editingSermonId = sermon.id;
+    document.getElementById('sermonFormTitle').textContent = 'Edit sermon';
+    document.getElementById('sermonTitleInput').value = sermon.title || '';
+    document.getElementById('sermonSeriesInput').value = sermon.series || '';
+    document.getElementById('sermonSpeakerInput').value = sermon.speaker || '';
+    document.getElementById('sermonLocationInput').value = sermon.location || '';
+    document.getElementById('sermonVideoInput').value = sermon.videoUrl || '';
+    document.getElementById('sermonSubmitBtn').textContent = 'Save changes';
+    document.getElementById('sermonCancelEditBtn').style.display = 'inline-block';
+    document.getElementById('sermonFormStatus').textContent = sermon.videoFileUrl
+      ? 'This sermon already has an uploaded video file — choosing a new one below will replace it.'
+      : '';
+    document.getElementById('sermonFormStatus').style.color = 'var(--ink-soft)';
+    document.querySelector('#sermonsPanel .upload-box').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function cancelEditSermon(){
+    editingSermonId = null;
+    document.getElementById('sermonFormTitle').textContent = 'Post a sermon';
+    document.getElementById('sermonTitleInput').value = '';
+    document.getElementById('sermonSeriesInput').value = '';
+    document.getElementById('sermonSpeakerInput').value = '';
+    document.getElementById('sermonLocationInput').value = '';
+    document.getElementById('sermonVideoInput').value = '';
+    document.getElementById('sermonThumbInput').value = '';
+    document.getElementById('sermonVideoFileInput').value = '';
+    document.getElementById('sermonSubmitBtn').textContent = 'Post sermon';
+    document.getElementById('sermonCancelEditBtn').style.display = 'none';
+  }
+
+  document.getElementById('sermonCancelEditBtn').addEventListener('click', cancelEditSermon);
+
+  document.getElementById('sermonSubmitBtn').addEventListener('click', async () => {
+    const status = document.getElementById('sermonFormStatus');
+    const submitBtn = document.getElementById('sermonSubmitBtn');
+    const title = document.getElementById('sermonTitleInput').value.trim();
+
+    if (!title) { status.style.color = '#a33'; status.textContent = 'A sermon title is required.'; return; }
+
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('series', document.getElementById('sermonSeriesInput').value.trim());
+    formData.append('speaker', document.getElementById('sermonSpeakerInput').value.trim());
+    formData.append('location', document.getElementById('sermonLocationInput').value.trim());
+    formData.append('videoUrl', document.getElementById('sermonVideoInput').value.trim());
+    const thumbFile = document.getElementById('sermonThumbInput').files[0];
+    if (thumbFile) formData.append('thumbnail', thumbFile);
+    const videoFile = document.getElementById('sermonVideoFileInput').files[0];
+    if (videoFile) formData.append('videoFile', videoFile);
+
+    submitBtn.disabled = true;
+    status.style.color = 'var(--ink-soft)';
+    status.textContent = editingSermonId ? 'Saving…' : (videoFile ? 'Uploading video… 0%' : 'Posting…');
+
+    const url = editingSermonId ? '/api/sermons/' + editingSermonId : '/api/sermons';
+    const method = editingSermonId ? 'PUT' : 'POST';
+
+    // Use XMLHttpRequest instead of fetch here so we can show real
+    // upload progress — important for large video files, which can
+    // take a while, especially on mobile data.
+    try {
+      await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open(method, url);
+        xhr.setRequestHeader('Authorization', 'Bearer ' + getToken());
+        xhr.upload.addEventListener('progress', (e) => {
+          if (e.lengthComputable && videoFile) {
+            const pct = Math.round((e.loaded / e.total) * 100);
+            status.textContent = `Uploading video… ${pct}%`;
+          }
+        });
+        xhr.onload = () => {
+          if (xhr.status >= 200 && xhr.status < 300) resolve();
+          else {
+            let msg = 'Something went wrong.';
+            try { msg = JSON.parse(xhr.responseText).error || msg; } catch {}
+            reject(new Error(msg));
+          }
+        };
+        xhr.onerror = () => reject(new Error('Could not reach the server.'));
+        xhr.send(formData);
+      });
+
+      status.style.color = 'var(--sage)';
+      status.textContent = editingSermonId ? 'Sermon updated.' : 'Sermon posted.';
+      cancelEditSermon();
+      loadSermonsAdmin();
+    } catch (err) {
+      status.style.color = '#a33';
+      status.textContent = err.message || 'Something went wrong — please try again.';
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+
+  document.getElementById('refreshSermonsBtn').addEventListener('click', loadSermonsAdmin);
+
+  // ===== Events =====
+  let editingEventId = null;
+
+  async function loadEventsAdmin(){
+    const list = document.getElementById('eventsList');
+    list.innerHTML = '<p style="color:var(--ink-soft);">Loading…</p>';
+    try {
+      const res = await fetch('/api/events');
+      const events = await res.json();
+      renderEventsAdmin(events);
+    } catch (err) {
+      list.innerHTML = '<p style="color:#a33;">Could not load events. Is the server running?</p>';
+    }
+  }
+
+  function renderEventsAdmin(events){
+    document.getElementById('eventsCount').textContent = `Upcoming Events (${events.length})`;
+    const list = document.getElementById('eventsList');
+    if (!events.length) {
+      list.innerHTML = '<div class="empty-state">No events yet — add your first one above.</div>';
+      return;
+    }
+    const sorted = [...events].sort((a, b) => new Date(a.date) - new Date(b.date));
+    list.innerHTML = '<div class="item-list">' + sorted.map(ev => `
+      <div class="item-card" data-id="${ev.id}">
+        <div>
+          <div class="name">${escapeHtml(ev.title)}</div>
+          <div class="meta">${formatDate(ev.date)}${ev.location ? ' · ' + escapeHtml(ev.location) : ''}</div>
+          ${ev.description ? `<div class="message">${escapeHtml(ev.description)}</div>` : ''}
+        </div>
+        <div class="actions">
+          <button class="edit-event" style="background:none; border:none; color:var(--sage); font-size:0.8rem; cursor:pointer; text-decoration:underline;">Edit</button>
+          <button class="delete delete-event">Delete</button>
+        </div>
+      </div>`).join('') + '</div>';
+
+    list.querySelectorAll('.edit-event').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const id = e.target.closest('.item-card').dataset.id;
+        startEditEvent(events.find(ev => ev.id === id));
+      });
+    });
+    list.querySelectorAll('.delete-event').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        const id = e.target.closest('.item-card').dataset.id;
+        if (!confirm("Delete this event? This can't be undone.")) return;
+        await fetch('/api/events/' + id, { method: 'DELETE', headers: { Authorization: 'Bearer ' + getToken() } });
+        if (editingEventId === id) cancelEditEvent();
+        loadEventsAdmin();
+      });
+    });
+  }
+
+  function startEditEvent(ev){
+    editingEventId = ev.id;
+    document.getElementById('eventFormTitle').textContent = 'Edit event';
+    document.getElementById('eventTitleInput').value = ev.title || '';
+    document.getElementById('eventDescInput').value = ev.description || '';
+    document.getElementById('eventDateInput').value = (ev.date || '').slice(0, 10);
+    document.getElementById('eventLocationInput').value = ev.location || '';
+    document.getElementById('eventSubmitBtn').textContent = 'Save changes';
+    document.getElementById('eventCancelEditBtn').style.display = 'inline-block';
+    document.getElementById('eventFormStatus').textContent = '';
+    document.querySelector('#eventsPanel .upload-box').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  function cancelEditEvent(){
+    editingEventId = null;
+    document.getElementById('eventFormTitle').textContent = 'Add an event';
+    document.getElementById('eventTitleInput').value = '';
+    document.getElementById('eventDescInput').value = '';
+    document.getElementById('eventDateInput').value = '';
+    document.getElementById('eventLocationInput').value = '';
+    document.getElementById('eventSubmitBtn').textContent = 'Add event';
+    document.getElementById('eventCancelEditBtn').style.display = 'none';
+  }
+  document.getElementById('eventCancelEditBtn').addEventListener('click', cancelEditEvent);
+
+  document.getElementById('eventSubmitBtn').addEventListener('click', async () => {
+    const status = document.getElementById('eventFormStatus');
+    const submitBtn = document.getElementById('eventSubmitBtn');
+    const title = document.getElementById('eventTitleInput').value.trim();
+    const date = document.getElementById('eventDateInput').value;
+
+    if (!title || !date) { status.style.color = '#a33'; status.textContent = 'Title and date are required.'; return; }
+
+    submitBtn.disabled = true;
+    status.style.color = 'var(--ink-soft)';
+    status.textContent = editingEventId ? 'Saving…' : 'Adding…';
+
+    try {
+      const url = editingEventId ? '/api/events/' + editingEventId : '/api/events';
+      const method = editingEventId ? 'PUT' : 'POST';
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + getToken() },
+        body: JSON.stringify({
+          title, date,
+          description: document.getElementById('eventDescInput').value.trim(),
+          location: document.getElementById('eventLocationInput').value.trim()
+        })
+      });
+      if (!res.ok) throw new Error();
+      status.style.color = 'var(--sage)';
+      status.textContent = editingEventId ? 'Event updated.' : 'Event added.';
+      cancelEditEvent();
+      loadEventsAdmin();
+    } catch (err) {
+      status.style.color = '#a33';
+      status.textContent = 'Something went wrong — please try again.';
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+  document.getElementById('refreshEventsBtn').addEventListener('click', loadEventsAdmin);
+
+  // ===== Pastors (leadership) =====
+  let editingPastorId = null;
+
+  async function loadPastorsAdmin(){
+    const list = document.getElementById('pastorsList');
+    list.innerHTML = '<p style="color:var(--ink-soft);">Loading…</p>';
+    try {
+      const res = await fetch('/api/leadership');
+      const leaders = await res.json();
+      renderPastorsAdmin(leaders);
+    } catch (err) {
+      list.innerHTML = '<p style="color:#a33;">Could not load pastors. Is the server running?</p>';
+    }
+  }
+
+  function renderPastorsAdmin(leaders){
+    document.getElementById('pastorsCount').textContent = `Meet Our Pastors (${leaders.length})`;
+    const list = document.getElementById('pastorsList');
+    if (!leaders.length) {
+      list.innerHTML = '<div class="empty-state">No pastors added yet — add your first one above.</div>';
+      return;
+    }
+    list.innerHTML = '<div class="item-list">' + leaders.map(l => `
+      <div class="item-card with-photo" data-id="${l.id}">
+        <div class="item-photo" style="${l.photoUrl ? `background-image:url('${escapeHtml(l.photoUrl)}');` : 'background:var(--linen);'}"></div>
+        <div>
+          <div class="name">${escapeHtml(l.name)}</div>
+          <div class="meta">${escapeHtml(l.role)}</div>
+          ${l.bio ? `<div class="message">${escapeHtml(l.bio)}</div>` : ''}
+        </div>
+        <div class="actions">
+          <button class="edit-pastor" style="background:none; border:none; color:var(--sage); font-size:0.8rem; cursor:pointer; text-decoration:underline;">Edit</button>
+          <button class="delete delete-pastor">Delete</button>
+        </div>
+      </div>`).join('') + '</div>';
+
+    list.querySelectorAll('.edit-pastor').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const id = e.target.closest('.item-card').dataset.id;
+        startEditPastor(leaders.find(l => l.id === id));
+      });
+    });
+    list.querySelectorAll('.delete-pastor').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        const id = e.target.closest('.item-card').dataset.id;
+        if (!confirm("Delete this pastor? This can't be undone.")) return;
+        await fetch('/api/leadership/' + id, { method: 'DELETE', headers: { Authorization: 'Bearer ' + getToken() } });
+        if (editingPastorId === id) cancelEditPastor();
+        loadPastorsAdmin();
+      });
+    });
+  }
+
+  function startEditPastor(l){
+    editingPastorId = l.id;
+    document.getElementById('pastorFormTitle').textContent = 'Edit pastor';
+    document.getElementById('pastorNameInput').value = l.name || '';
+    document.getElementById('pastorRoleInput').value = l.role || '';
+    document.getElementById('pastorBioInput').value = l.bio || '';
+    document.getElementById('pastorSubmitBtn').textContent = 'Save changes';
+    document.getElementById('pastorCancelEditBtn').style.display = 'inline-block';
+    document.getElementById('pastorFormStatus').textContent = l.photoUrl ? 'Choosing a new photo below will replace the current one.' : '';
+    document.getElementById('pastorFormStatus').style.color = 'var(--ink-soft)';
+    document.querySelector('#pastorsPanel .upload-box').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  function cancelEditPastor(){
+    editingPastorId = null;
+    document.getElementById('pastorFormTitle').textContent = 'Add a pastor';
+    document.getElementById('pastorNameInput').value = '';
+    document.getElementById('pastorRoleInput').value = '';
+    document.getElementById('pastorBioInput').value = '';
+    document.getElementById('pastorPhotoInput').value = '';
+    document.getElementById('pastorSubmitBtn').textContent = 'Add pastor';
+    document.getElementById('pastorCancelEditBtn').style.display = 'none';
+  }
+  document.getElementById('pastorCancelEditBtn').addEventListener('click', cancelEditPastor);
+
+  document.getElementById('pastorSubmitBtn').addEventListener('click', async () => {
+    const status = document.getElementById('pastorFormStatus');
+    const submitBtn = document.getElementById('pastorSubmitBtn');
+    const name = document.getElementById('pastorNameInput').value.trim();
+    const role = document.getElementById('pastorRoleInput').value.trim();
+
+    if (!name || !role) { status.style.color = '#a33'; status.textContent = 'Name and role are required.'; return; }
+
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('role', role);
+    formData.append('bio', document.getElementById('pastorBioInput').value.trim());
+    const photoFile = document.getElementById('pastorPhotoInput').files[0];
+    if (photoFile) formData.append('photo', photoFile);
+
+    submitBtn.disabled = true;
+    status.style.color = 'var(--ink-soft)';
+    status.textContent = editingPastorId ? 'Saving…' : 'Adding…';
+
+    try {
+      const url = editingPastorId ? '/api/leadership/' + editingPastorId : '/api/leadership';
+      const method = editingPastorId ? 'PUT' : 'POST';
+      const res = await fetch(url, { method, headers: { Authorization: 'Bearer ' + getToken() }, body: formData });
+      if (!res.ok) throw new Error();
+      status.style.color = 'var(--sage)';
+      status.textContent = editingPastorId ? 'Pastor updated.' : 'Pastor added.';
+      cancelEditPastor();
+      loadPastorsAdmin();
+    } catch (err) {
+      status.style.color = '#a33';
+      status.textContent = 'Something went wrong — please try again.';
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+  document.getElementById('refreshPastorsBtn').addEventListener('click', loadPastorsAdmin);
+
+  // ===== Ministries =====
+  let editingMinistryId = null;
+
+  async function loadMinistriesAdmin(){
+    const list = document.getElementById('ministriesList');
+    list.innerHTML = '<p style="color:var(--ink-soft);">Loading…</p>';
+    try {
+      const res = await fetch('/api/ministries');
+      const ministries = await res.json();
+      renderMinistriesAdmin(ministries);
+    } catch (err) {
+      list.innerHTML = '<p style="color:#a33;">Could not load ministries. Is the server running?</p>';
+    }
+  }
+
+  function renderMinistriesAdmin(ministries){
+    document.getElementById('ministriesCount').textContent = `Ministries (${ministries.length})`;
+    const list = document.getElementById('ministriesList');
+    if (!ministries.length) {
+      list.innerHTML = '<div class="empty-state">No ministries added yet — add your first one above.</div>';
+      return;
+    }
+    list.innerHTML = '<div class="item-list">' + ministries.map(m => `
+      <div class="item-card" data-id="${m.id}">
+        <div>
+          <div class="name">${m.icon ? escapeHtml(m.icon) + ' ' : ''}${escapeHtml(m.name)}</div>
+          ${m.description ? `<div class="message">${escapeHtml(m.description)}</div>` : ''}
+        </div>
+        <div class="actions">
+          <button class="edit-ministry" style="background:none; border:none; color:var(--sage); font-size:0.8rem; cursor:pointer; text-decoration:underline;">Edit</button>
+          <button class="delete delete-ministry">Delete</button>
+        </div>
+      </div>`).join('') + '</div>';
+
+    list.querySelectorAll('.edit-ministry').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const id = e.target.closest('.item-card').dataset.id;
+        startEditMinistry(ministries.find(m => m.id === id));
+      });
+    });
+    list.querySelectorAll('.delete-ministry').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        const id = e.target.closest('.item-card').dataset.id;
+        if (!confirm("Delete this ministry? This can't be undone.")) return;
+        await fetch('/api/ministries/' + id, { method: 'DELETE', headers: { Authorization: 'Bearer ' + getToken() } });
+        if (editingMinistryId === id) cancelEditMinistry();
+        loadMinistriesAdmin();
+      });
+    });
+  }
+
+  function startEditMinistry(m){
+    editingMinistryId = m.id;
+    document.getElementById('ministryFormTitle').textContent = 'Edit ministry';
+    document.getElementById('ministryNameInput').value = m.name || '';
+    document.getElementById('ministryDescInput').value = m.description || '';
+    document.getElementById('ministryIconInput').value = m.icon || '';
+    document.getElementById('ministrySubmitBtn').textContent = 'Save changes';
+    document.getElementById('ministryCancelEditBtn').style.display = 'inline-block';
+    document.getElementById('ministryFormStatus').textContent = '';
+    document.querySelector('#ministriesPanel .upload-box').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  function cancelEditMinistry(){
+    editingMinistryId = null;
+    document.getElementById('ministryFormTitle').textContent = 'Add a ministry';
+    document.getElementById('ministryNameInput').value = '';
+    document.getElementById('ministryDescInput').value = '';
+    document.getElementById('ministryIconInput').value = '';
+    document.getElementById('ministrySubmitBtn').textContent = 'Add ministry';
+    document.getElementById('ministryCancelEditBtn').style.display = 'none';
+  }
+  document.getElementById('ministryCancelEditBtn').addEventListener('click', cancelEditMinistry);
+
+  document.getElementById('ministrySubmitBtn').addEventListener('click', async () => {
+    const status = document.getElementById('ministryFormStatus');
+    const submitBtn = document.getElementById('ministrySubmitBtn');
+    const name = document.getElementById('ministryNameInput').value.trim();
+
+    if (!name) { status.style.color = '#a33'; status.textContent = 'A ministry name is required.'; return; }
+
+    submitBtn.disabled = true;
+    status.style.color = 'var(--ink-soft)';
+    status.textContent = editingMinistryId ? 'Saving…' : 'Adding…';
+
+    try {
+      const url = editingMinistryId ? '/api/ministries/' + editingMinistryId : '/api/ministries';
+      const method = editingMinistryId ? 'PUT' : 'POST';
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + getToken() },
+        body: JSON.stringify({
+          name,
+          description: document.getElementById('ministryDescInput').value.trim(),
+          icon: document.getElementById('ministryIconInput').value.trim()
+        })
+      });
+      if (!res.ok) throw new Error();
+      status.style.color = 'var(--sage)';
+      status.textContent = editingMinistryId ? 'Ministry updated.' : 'Ministry added.';
+      cancelEditMinistry();
+      loadMinistriesAdmin();
+    } catch (err) {
+      status.style.color = '#a33';
+      status.textContent = 'Something went wrong — please try again.';
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+  document.getElementById('refreshMinistriesBtn').addEventListener('click', loadMinistriesAdmin);
+
+  // ===== Settings =====
+  async function loadSettingsAdmin(){
+    try {
+      const res = await fetch('/api/settings', { headers: { Authorization: 'Bearer ' + getToken() } });
+      if (res.status === 401) { clearSession(); showLogin(); return; }
+      const s = await res.json();
+      document.getElementById('settingsEmailInput').value = s.email || '';
+      document.getElementById('settingsPhoneInput').value = s.phone || '';
+      document.getElementById('settingsPhoneDisplayInput').value = s.phoneDisplay || '';
+      document.getElementById('settingsSundayInput').value = s.hours?.sunday || '';
+      document.getElementById('settingsWednesdayInput').value = s.hours?.wednesday || '';
+      document.getElementById('settingsFridayInput').value = s.hours?.friday || '';
+      document.getElementById('settingsCampus0NameInput').value = s.campuses?.[0]?.name || '';
+      document.getElementById('settingsCampus0AddressInput').value = s.campuses?.[0]?.address || '';
+      document.getElementById('settingsCampus1NameInput').value = s.campuses?.[1]?.name || '';
+      document.getElementById('settingsCampus1AddressInput').value = s.campuses?.[1]?.address || '';
+      document.getElementById('settingsFacebookInput').value = s.social?.facebook || '';
+      document.getElementById('settingsInstagramInput').value = s.social?.instagram || '';
+      document.getElementById('settingsTiktokInput').value = s.social?.tiktok || '';
+      document.getElementById('settingsYoutubeInput').value = s.social?.youtube || '';
+      document.getElementById('settingsTaglineInput').value = s.footerTagline || '';
+    } catch (err) {
+      document.getElementById('settingsStatus').style.color = '#a33';
+      document.getElementById('settingsStatus').textContent = 'Could not load settings. Is the server running?';
+    }
+  }
+
+  document.getElementById('settingsSaveBtn').addEventListener('click', async () => {
+    const status = document.getElementById('settingsStatus');
+    const btn = document.getElementById('settingsSaveBtn');
+    btn.disabled = true;
+    status.style.color = 'var(--ink-soft)';
+    status.textContent = 'Saving…';
+
+    try {
+      const res = await fetch('/api/settings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + getToken() },
+        body: JSON.stringify({
+          email: document.getElementById('settingsEmailInput').value.trim(),
+          phone: document.getElementById('settingsPhoneInput').value.trim(),
+          phoneDisplay: document.getElementById('settingsPhoneDisplayInput').value.trim(),
+          hours: {
+            sunday: document.getElementById('settingsSundayInput').value.trim(),
+            wednesday: document.getElementById('settingsWednesdayInput').value.trim(),
+            friday: document.getElementById('settingsFridayInput').value.trim()
+          },
+          campuses: [
+            { name: document.getElementById('settingsCampus0NameInput').value.trim(), address: document.getElementById('settingsCampus0AddressInput').value.trim() },
+            { name: document.getElementById('settingsCampus1NameInput').value.trim(), address: document.getElementById('settingsCampus1AddressInput').value.trim() }
+          ],
+          social: {
+            facebook: document.getElementById('settingsFacebookInput').value.trim(),
+            instagram: document.getElementById('settingsInstagramInput').value.trim(),
+            tiktok: document.getElementById('settingsTiktokInput').value.trim(),
+            youtube: document.getElementById('settingsYoutubeInput').value.trim()
+          },
+          footerTagline: document.getElementById('settingsTaglineInput').value.trim()
+        })
+      });
+      if (!res.ok) throw new Error();
+      status.style.color = 'var(--sage)';
+      status.textContent = 'Settings saved — changes are live on the site now.';
+    } catch (err) {
+      status.style.color = '#a33';
+      status.textContent = 'Something went wrong — please try again.';
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  if (getToken()) { showDashboard(); } else { showLogin(); }
+</script>
+
+</body>
+</html>

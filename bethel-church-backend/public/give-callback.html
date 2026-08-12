@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Giving — Bethel Divine Mystery Church</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --veil:#2b1b3d; --veil-2:#3c2854;
+    --sage:#7fa68c; --sage-light:#a9c7b0;
+    --cream:#f2eee4;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    font-family:'Inter',sans-serif; min-height:100vh; display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(160deg,var(--veil),var(--veil-2)); color:var(--cream); padding:20px;
+  }
+  h1{font-family:'Cormorant Garamond',serif; font-size:1.6rem; margin-bottom:12px;}
+  .card{
+    background:rgba(255,255,255,0.04); border:1px solid rgba(127,166,140,0.3); border-radius:16px;
+    padding:44px 36px; max-width:420px; width:100%; text-align:center;
+  }
+  .icon{width:56px; height:56px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 20px; font-size:1.6rem;}
+  .icon.success{background:rgba(127,166,140,0.2); color:var(--sage-light);}
+  .icon.fail{background:rgba(224,169,159,0.18); color:#e0a99f;}
+  .icon.loading{background:rgba(127,166,140,0.12); color:var(--sage-light);}
+  p{color:rgba(242,238,228,0.7); font-size:0.95rem; line-height:1.6; margin-bottom:8px;}
+  .detail{font-size:0.85rem; color:rgba(242,238,228,0.5); margin-top:18px;}
+  a.btn{
+    display:inline-block; margin-top:26px; padding:12px 28px; border-radius:999px;
+    background:linear-gradient(135deg,var(--sage-light),var(--sage)); color:var(--veil);
+    font-weight:700; font-size:0.9rem; text-decoration:none;
+  }
+</style>
+</head>
+<body>
+
+<div class="card" id="resultCard">
+  <div class="icon loading" id="resultIcon">…</div>
+  <h1 id="resultTitle">Confirming your gift…</h1>
+  <p id="resultMessage">Please wait a moment, this only takes a second.</p>
+  <div class="detail" id="resultDetail"></div>
+  <a href="/#give" class="btn">Back to Bethel Divine Mystery Church</a>
+</div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const reference = params.get('reference') || params.get('trxref');
+
+  const icon = document.getElementById('resultIcon');
+  const title = document.getElementById('resultTitle');
+  const message = document.getElementById('resultMessage');
+  const detail = document.getElementById('resultDetail');
+
+  async function verify() {
+    if (!reference) {
+      icon.className = 'icon fail';
+      icon.textContent = '!';
+      title.textContent = 'Something went wrong';
+      message.textContent = "We couldn't find a payment reference in the link. If you completed a gift, please contact us to confirm.";
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/give/verify/' + encodeURIComponent(reference));
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Could not verify this payment.');
+
+      if (data.success) {
+        icon.className = 'icon success';
+        icon.textContent = '✓';
+        title.textContent = 'Thank you for giving!';
+        message.textContent = "We've received your gift — thank you for sowing into this family.";
+        detail.textContent = `₵${data.amount.toLocaleString()} · ${data.phone}`;
+      } else {
+        icon.className = 'icon fail';
+        icon.textContent = '×';
+        title.textContent = 'Payment not completed';
+        message.textContent = "It looks like this payment wasn't successful. No charge was made — feel free to try again.";
+      }
+    } catch (err) {
+      icon.className = 'icon fail';
+      icon.textContent = '!';
+      title.textContent = 'Could not confirm payment';
+      message.textContent = err.message || "Please contact us and we'll help sort it out.";
+    }
+  }
+
+  verify();
+</script>
+
+</body>
+</html>

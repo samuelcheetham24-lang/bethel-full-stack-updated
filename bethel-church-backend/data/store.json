@@ -1,0 +1,284 @@
+{
+  "admins": [
+    {
+      "id": "1786492195034",
+      "username": "Bethel",
+      "passwordHash": "$2a$10$0dmBYXAiYu1HG3MvNcK9aeo9qrptnIVsp1IVss3crj5iSwjMx8ko."
+    }
+  ],
+  "sermons": [
+    {
+      "id": "sermon-1",
+      "title": "The God Who Sees",
+      "series": "Walking in Purpose",
+      "speaker": "Senior Pastor",
+      "location": "Sowutuom",
+      "videoUrl": "",
+      "thumbnailUrl": ""
+    },
+    {
+      "id": "sermon-2",
+      "title": "Faith in the In-Between",
+      "series": "Anchored",
+      "speaker": "Senior Pastor",
+      "location": "Sowutuom",
+      "videoUrl": "",
+      "thumbnailUrl": ""
+    },
+    {
+      "id": "sermon-3",
+      "title": "Grace for the Starting Over",
+      "series": "New Beginnings",
+      "speaker": "Branch Pastor",
+      "location": "Nsakina",
+      "videoUrl": "",
+      "thumbnailUrl": ""
+    }
+  ],
+  "events": [
+    {
+      "id": "event-1",
+      "title": "Sunday Worship Service",
+      "description": "8:30 – 11:30 AM, all welcome",
+      "date": "2026-09-14",
+      "location": "Sowutuom"
+    },
+    {
+      "id": "event-2",
+      "title": "Midweek Prayer & Bible Study",
+      "description": "6:30 – 7:30 PM — open to all",
+      "date": "2026-09-17",
+      "location": "Both Campuses"
+    },
+    {
+      "id": "event-3",
+      "title": "Youth Connect Night",
+      "description": "Games, worship, and real conversation",
+      "date": "2026-09-21",
+      "location": "Sowutuom"
+    },
+    {
+      "id": "event-4",
+      "title": "Nsakina Family Day",
+      "description": "A celebration for our Nsakina branch",
+      "date": "2026-09-28",
+      "location": "Nsakina"
+    }
+  ],
+  "ministries": [
+    {
+      "id": "children",
+      "name": "Children's Ministry",
+      "description": "A safe, joyful space for kids to discover faith through story, song, and play.",
+      "icon": "👶"
+    },
+    {
+      "id": "youth",
+      "name": "Youth Ministry",
+      "description": "Real talk, real friendships, and a faith that holds up outside of church walls.",
+      "icon": "🔥"
+    },
+    {
+      "id": "worship",
+      "name": "Worship & Creative Arts",
+      "description": "Music, media, and the arts — offered as worship, open to every skill level.",
+      "icon": "🎶"
+    },
+    {
+      "id": "men",
+      "name": "Men's Fellowship",
+      "description": "Brotherhood, accountability, and honest conversation about faith and life.",
+      "icon": "🤝"
+    },
+    {
+      "id": "women",
+      "name": "Women's Fellowship",
+      "description": "A community of women encouraging each other through every season.",
+      "icon": "🌿"
+    },
+    {
+      "id": "outreach",
+      "name": "Outreach & Missions",
+      "description": "Taking what happens here out into Sowutuom, Nsakina, and beyond.",
+      "icon": "🌍"
+    }
+  ],
+  "gallery": [
+    {
+      "id": "g1",
+      "caption": "Sunday Worship",
+      "imageUrl": ""
+    },
+    {
+      "id": "g2",
+      "caption": "Youth Camp",
+      "imageUrl": ""
+    },
+    {
+      "id": "g3",
+      "caption": "Baptism Sunday",
+      "imageUrl": ""
+    },
+    {
+      "id": "g4",
+      "caption": "Nsakina Dedication",
+      "imageUrl": ""
+    },
+    {
+      "id": "g5",
+      "caption": "Christmas Service",
+      "imageUrl": ""
+    },
+    {
+      "id": "g6",
+      "caption": "Community Outreach",
+      "imageUrl": ""
+    },
+    {
+      "id": "b85f3dc6-50f5-4be5-ac41-981c77a45454",
+      "caption": "Sunday Worship",
+      "imageUrl": "/uploads/1786493004643-453858.jpeg"
+    },
+    {
+      "id": "467e0a20-c465-4d35-8288-18e9fb4c5486",
+      "caption": "Sunday Worship",
+      "imageUrl": "/uploads/1786493004671-877080.jpeg"
+    },
+    {
+      "id": "6c098c5f-a4f1-4eb9-a5d6-39e19f563db1",
+      "caption": "Sunday Worship",
+      "imageUrl": "/uploads/1786493004695-476615.jpeg"
+    },
+    {
+      "id": "67feb919-4149-4ce1-9fc7-30f9f6d90fea",
+      "caption": "Sunday Worship",
+      "imageUrl": "/uploads/1786493004714-509458.jpeg"
+    },
+    {
+      "id": "58067e0f-3a94-4afd-adc7-6dafe7c0485e",
+      "caption": "Sunday Worship",
+      "imageUrl": "/uploads/1786493004730-964677.jpeg"
+    },
+    {
+      "id": "2e80ec9d-6036-4a55-8e59-2ac7deab450a",
+      "caption": "Sunday Worship",
+      "imageUrl": "/uploads/1786493004748-811763.jpeg"
+    },
+    {
+      "id": "d4144fd6-8e8d-4a2b-bc48-2a345394a457",
+      "caption": "Sunday Worship",
+      "imageUrl": "/uploads/1786493004758-298263.jpeg"
+    },
+    {
+      "id": "9d8ba61c-154a-42af-9205-4f072394fe82",
+      "caption": "Sunday Worship",
+      "imageUrl": "/uploads/1786493004780-950310.jpeg"
+    },
+    {
+      "id": "b1e75212-7476-49e4-85df-91937b55d033",
+      "caption": "Christmas Service",
+      "imageUrl": "/uploads/1786493042855-928481.jpeg"
+    },
+    {
+      "id": "227ba6f0-cc33-4997-864b-f4f6d10df298",
+      "caption": "Christmas Service",
+      "imageUrl": "/uploads/1786493042876-308113.jpeg"
+    },
+    {
+      "id": "414dae52-2a08-4ed1-b346-a4f9b7439f04",
+      "caption": "Christmas Service",
+      "imageUrl": "/uploads/1786493042890-124773.jpeg"
+    },
+    {
+      "id": "7dd35640-97aa-43b6-8627-00c4b19e3c23",
+      "caption": "Christmas Service",
+      "imageUrl": "/uploads/1786493042905-973675.jpeg"
+    },
+    {
+      "id": "a9606935-b528-4b8b-8918-2b87ab44116a",
+      "caption": "Christmas Service",
+      "imageUrl": "/uploads/1786493042921-109406.jpeg"
+    },
+    {
+      "id": "cd1d8c36-0c2c-4f8a-a6e6-654d9964f2f9",
+      "caption": "Community Outreach",
+      "imageUrl": "/uploads/1786493091339-944468.jpeg"
+    },
+    {
+      "id": "0cc7bd4c-9adf-4e88-8af8-f37870793c5e",
+      "caption": "Community Outreach",
+      "imageUrl": "/uploads/1786493108842-32994.jpeg"
+    },
+    {
+      "id": "1f0cca60-709e-4e20-a50a-d4b7747b1b8c",
+      "caption": "Community Outreach",
+      "imageUrl": "/uploads/1786493108860-937499.jpeg"
+    },
+    {
+      "id": "84b0700c-8cfc-4771-b518-1d4b22187902",
+      "caption": "Community Outreach",
+      "imageUrl": "/uploads/1786493108876-853615.jpeg"
+    }
+  ],
+  "leadership": [
+    {
+      "id": "senior-pastor-1",
+      "name": "Rev. Abraham Laryea",
+      "role": "Senior Pastor · Sowutuom",
+      "bio": "Leading Bethel with a heart for the searching and a passion for genuine community.",
+      "photoUrl": "/img/pastor-abraham-laryea.jpg"
+    },
+    {
+      "id": "senior-pastor-2",
+      "name": "Rev. Stella Laryea",
+      "role": "Senior Pastor · Sowutuom",
+      "bio": "Leading Bethel with a heart for the searching and a passion for genuine community.",
+      "photoUrl": "/img/pastor-stella-laryea.jpg"
+    },
+    {
+      "id": "branch-pastor",
+      "name": "Evang. Victoria Cheetham",
+      "role": "Branch Pastor · Nsakina",
+      "bio": "Shepherding the Nsakina family with warmth, and a deep love for this community.",
+      "photoUrl": "/img/evangelist-victoria-cheetham.jpg"
+    }
+  ],
+  "prayerRequests": [],
+  "givings": [
+    {
+      "reference": "ks1ux1pmle",
+      "phone": "0592901886",
+      "amount": 50,
+      "currency": "GHS",
+      "note": "",
+      "givenAt": "2026-08-11T23:55:37.000Z"
+    }
+  ],
+  "settings": {
+    "email": "betheldivinemysterychurch@gmail.com",
+    "phone": "+233249382270",
+    "phoneDisplay": "024 938 2270",
+    "hours": {
+      "sunday": "8:30 – 11:30 AM",
+      "wednesday": "6:30 – 7:30 PM",
+      "friday": "6:30 – 7:30 PM"
+    },
+    "campuses": [
+      {
+        "name": "Sowutuom",
+        "address": "Sowutuom, Accra"
+      },
+      {
+        "name": "Nsakina",
+        "address": "Nsakina, Accra"
+      }
+    ],
+    "social": {
+      "facebook": "https://www.facebook.com/profile.php?id=100064570636504",
+      "instagram": "https://www.instagram.com/betheldivinemysterychurch?igsh=MTk5c3U0Y3pvdzN0bg==",
+      "tiktok": "https://vt.tiktok.com/ZS4ftwu7L/",
+      "youtube": "https://youtube.com/@betheldivinemysteryint.chu5102?si=auu5n5DFL8vquMZ7"
+    },
+    "footerTagline": "Every mystery welcome. Every question honored."
+  }
+}
