@@ -198,6 +198,20 @@
   .event-info h4{font-family:'Cormorant Garamond',serif; font-size:1.25rem; font-weight:600; color:var(--cream); margin-bottom:4px;}
   .event-info p{font-size:0.85rem; color:rgba(250,245,236,0.55);}
   .event-loc{font-family:'JetBrains Mono',monospace; font-size:0.72rem; color:var(--sage); white-space:nowrap;}
+  .event-countdown{
+    grid-column:1/-1; display:none; align-items:center; gap:14px; flex-wrap:wrap;
+    margin-top:10px; padding-top:14px; border-top:1px dashed rgba(127,166,140,0.25);
+  }
+  .event-countdown.active{display:flex;}
+  .cd-label{font-family:'JetBrains Mono',monospace; font-size:0.68rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--blush);}
+  .cd-units{display:flex; gap:8px;}
+  .cd-unit{
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    background:rgba(127,166,140,0.12); border:1px solid rgba(127,166,140,0.25); border-radius:8px;
+    min-width:44px; padding:5px 6px;
+  }
+  .cd-num{font-family:'JetBrains Mono',monospace; font-size:1rem; font-weight:600; color:var(--cream); line-height:1.1;}
+  .cd-lbl{font-family:'JetBrains Mono',monospace; font-size:0.58rem; letter-spacing:0.05em; text-transform:uppercase; color:rgba(250,245,236,0.5); margin-top:2px;}
 
   /* ===== MINISTRIES ===== */
   .ministries{background:var(--linen);}
@@ -252,6 +266,9 @@
     background:rgba(18,14,31,0.35); opacity:0; transition:opacity 0.2s;
   }
   .gallery-tile.album:hover .view-hint{opacity:1;}
+  @media (hover: none){
+    .gallery-tile.album .view-hint{opacity:1;}
+  }
 
   /* ===== LIGHTBOX / ALBUM VIEWER ===== */
   .lightbox-overlay{
@@ -281,7 +298,7 @@
   .lightbox-meta .caption{font-family:'Cormorant Garamond',serif; font-size:1.2rem;}
   .lightbox-meta .counter{font-family:'JetBrains Mono',monospace; font-size:0.75rem; color:rgba(250,245,236,0.55); margin-top:4px;}
   @media (max-width:600px){
-    .lightbox-nav{width:38px; height:38px;}
+    .lightbox-nav{width:44px; height:44px;}
     .lightbox-prev{left:-4px;} .lightbox-next{right:-4px;}
   }
 
@@ -540,6 +557,8 @@
           <span class="series">New Beginnings</span>
           <h3>Grace for the Starting Over</h3>
           <p class="meta">Branch Pastor · Nsakina</p>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -566,25 +585,49 @@
       <p style="color:rgba(250,245,236,0.65);">Something for every season of life — mark your calendar.</p>
     </div>
     <div class="event-list" id="eventList">
-      <div class="event-row reveal">
+      <div class="event-row reveal" data-static-date="2026-09-14T08:30:00">
         <div class="event-date"><span class="day">14</span><span class="mon">Sep</span></div>
         <div class="event-info"><h4>Sunday Worship Service</h4><p>8:30 – 11:30 AM, all welcome</p></div>
         <div class="event-loc">Sowutuom</div>
+        <div class="event-countdown"><span class="cd-label">Starts in</span><div class="cd-units">
+          <div class="cd-unit"><span class="cd-num" data-unit="d">0</span><span class="cd-lbl">Days</span></div>
+          <div class="cd-unit"><span class="cd-num" data-unit="h">00</span><span class="cd-lbl">Hrs</span></div>
+          <div class="cd-unit"><span class="cd-num" data-unit="m">00</span><span class="cd-lbl">Min</span></div>
+          <div class="cd-unit"><span class="cd-num" data-unit="s">00</span><span class="cd-lbl">Sec</span></div>
+        </div></div>
       </div>
-      <div class="event-row reveal">
+      <div class="event-row reveal" data-static-date="2026-09-17T18:30:00">
         <div class="event-date"><span class="day">17</span><span class="mon">Sep</span></div>
         <div class="event-info"><h4>Midweek Prayer &amp; Bible Study</h4><p>6:30 – 7:30 PM — open to all</p></div>
         <div class="event-loc">Both Campuses</div>
+        <div class="event-countdown"><span class="cd-label">Starts in</span><div class="cd-units">
+          <div class="cd-unit"><span class="cd-num" data-unit="d">0</span><span class="cd-lbl">Days</span></div>
+          <div class="cd-unit"><span class="cd-num" data-unit="h">00</span><span class="cd-lbl">Hrs</span></div>
+          <div class="cd-unit"><span class="cd-num" data-unit="m">00</span><span class="cd-lbl">Min</span></div>
+          <div class="cd-unit"><span class="cd-num" data-unit="s">00</span><span class="cd-lbl">Sec</span></div>
+        </div></div>
       </div>
-      <div class="event-row reveal">
+      <div class="event-row reveal" data-static-date="2026-09-21T18:00:00">
         <div class="event-date"><span class="day">21</span><span class="mon">Sep</span></div>
         <div class="event-info"><h4>Youth Connect Night</h4><p>Games, worship, and real conversation</p></div>
         <div class="event-loc">Sowutuom</div>
+        <div class="event-countdown"><span class="cd-label">Starts in</span><div class="cd-units">
+          <div class="cd-unit"><span class="cd-num" data-unit="d">0</span><span class="cd-lbl">Days</span></div>
+          <div class="cd-unit"><span class="cd-num" data-unit="h">00</span><span class="cd-lbl">Hrs</span></div>
+          <div class="cd-unit"><span class="cd-num" data-unit="m">00</span><span class="cd-lbl">Min</span></div>
+          <div class="cd-unit"><span class="cd-num" data-unit="s">00</span><span class="cd-lbl">Sec</span></div>
+        </div></div>
       </div>
-      <div class="event-row reveal">
+      <div class="event-row reveal" data-static-date="2026-09-28T09:00:00">
         <div class="event-date"><span class="day">28</span><span class="mon">Sep</span></div>
         <div class="event-info"><h4>Nsakina Family Day</h4><p>A celebration for our Nsakina branch</p></div>
         <div class="event-loc">Nsakina</div>
+        <div class="event-countdown"><span class="cd-label">Starts in</span><div class="cd-units">
+          <div class="cd-unit"><span class="cd-num" data-unit="d">0</span><span class="cd-lbl">Days</span></div>
+          <div class="cd-unit"><span class="cd-num" data-unit="h">00</span><span class="cd-lbl">Hrs</span></div>
+          <div class="cd-unit"><span class="cd-num" data-unit="m">00</span><span class="cd-lbl">Min</span></div>
+          <div class="cd-unit"><span class="cd-num" data-unit="s">00</span><span class="cd-lbl">Sec</span></div>
+        </div></div>
       </div>
     </div>
   </div>
@@ -920,15 +963,58 @@
         const d = new Date(ev.date);
         const day = isNaN(d) ? '--' : d.getDate();
         const mon = isNaN(d) ? '' : d.toLocaleString('default', { month: 'short' });
+        const eventTime = isNaN(d) ? '' : d.getTime();
         return `
         <div class="event-row reveal visible">
           <div class="event-date"><span class="day">${day}</span><span class="mon">${mon}</span></div>
           <div class="event-info"><h4>${escapeHtml(ev.title)}</h4><p>${escapeHtml(ev.description)}</p></div>
           <div class="event-loc">${escapeHtml(ev.location)}</div>
+          <div class="event-countdown" data-event-time="${eventTime}"><span class="cd-label">Starts in</span><div class="cd-units">
+            <div class="cd-unit"><span class="cd-num" data-unit="d">0</span><span class="cd-lbl">Days</span></div>
+            <div class="cd-unit"><span class="cd-num" data-unit="h">00</span><span class="cd-lbl">Hrs</span></div>
+            <div class="cd-unit"><span class="cd-num" data-unit="m">00</span><span class="cd-lbl">Min</span></div>
+            <div class="cd-unit"><span class="cd-num" data-unit="s">00</span><span class="cd-lbl">Sec</span></div>
+          </div></div>
         </div>`;
       }).join('');
+      tickEventCountdowns();
     } catch (e) { /* keep static fallback content */ }
   }
+
+  function tickEventCountdowns() {
+    const THREE_DAYS = 3 * 24 * 60 * 60 * 1000;
+    document.querySelectorAll('#eventList .event-row').forEach(row => {
+      const cd = row.querySelector('.event-countdown');
+      if (!cd) return;
+      // Dynamic (admin-added) events carry data-event-time on the countdown div itself.
+      // Static fallback events carry data-static-date on the row; convert it once.
+      if (!cd.dataset.eventTime) {
+        const staticDate = row.dataset.staticDate;
+        if (!staticDate) return;
+        const t = new Date(staticDate).getTime();
+        if (isNaN(t)) return;
+        cd.dataset.eventTime = t;
+      }
+      const target = parseInt(cd.dataset.eventTime, 10);
+      if (isNaN(target)) return;
+      const diff = target - Date.now();
+      if (diff > 0 && diff <= THREE_DAYS) {
+        cd.classList.add('active');
+        const d = Math.floor(diff / 86400000);
+        const h = Math.floor((diff % 86400000) / 3600000);
+        const m = Math.floor((diff % 3600000) / 60000);
+        const s = Math.floor((diff % 60000) / 1000);
+        cd.querySelector('[data-unit="d"]').textContent = d;
+        cd.querySelector('[data-unit="h"]').textContent = String(h).padStart(2, '0');
+        cd.querySelector('[data-unit="m"]').textContent = String(m).padStart(2, '0');
+        cd.querySelector('[data-unit="s"]').textContent = String(s).padStart(2, '0');
+      } else {
+        cd.classList.remove('active');
+      }
+    });
+  }
+  tickEventCountdowns();
+  setInterval(tickEventCountdowns, 1000);
 
   async function loadMinistries() {
     try {
