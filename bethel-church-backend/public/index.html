@@ -684,12 +684,24 @@
       <h2>Life at Bethel</h2>
     </div>
     <div class="gallery-grid" id="galleryGrid">
-      <div class="gallery-tile reveal"><span>Sunday Worship</span></div>
+      <div class="gallery-tile album reveal" data-static-album="sunday-worship" style="background-image:url('img/gallery/sunday-worship/1.jpg'); background-size:cover; background-position:center;">
+        <span>Sunday Worship</span>
+        <span class="count-badge">8 photos</span>
+        <span class="view-hint">View Album</span>
+      </div>
       <div class="gallery-tile reveal"><span>Youth Camp</span></div>
       <div class="gallery-tile reveal"><span>Baptism Sunday</span></div>
       <div class="gallery-tile reveal"><span>Nsakina Dedication</span></div>
-      <div class="gallery-tile reveal"><span>Christmas Service</span></div>
-      <div class="gallery-tile reveal"><span>Community Outreach</span></div>
+      <div class="gallery-tile album reveal" data-static-album="christmas-service" style="background-image:url('img/gallery/christmas-service/1.jpg'); background-size:cover; background-position:center;">
+        <span>Christmas Service</span>
+        <span class="count-badge">5 photos</span>
+        <span class="view-hint">View Album</span>
+      </div>
+      <div class="gallery-tile album reveal" data-static-album="community-outreach" style="background-image:url('img/gallery/community-outreach/1.jpg'); background-size:cover; background-position:center;">
+        <span>Community Outreach</span>
+        <span class="count-badge">4 photos</span>
+        <span class="view-hint">View Album</span>
+      </div>
     </div>
   </div>
 </section>
@@ -1071,6 +1083,22 @@
     if (e.key === 'ArrowRight') nextPhoto();
     if (e.key === 'ArrowLeft') prevPhoto();
   });
+
+  // Photos baked directly into the site (not uploaded via the admin
+  // dashboard), so they survive server restarts/redeploys permanently.
+  const staticGalleryAlbums = {
+    'sunday-worship': { caption: 'Sunday Worship', photos: Array.from({length: 8}, (_, i) => ({ imageUrl: `img/gallery/sunday-worship/${i+1}.jpg`, caption: 'Sunday Worship' })) },
+    'christmas-service': { caption: 'Christmas Service', photos: Array.from({length: 5}, (_, i) => ({ imageUrl: `img/gallery/christmas-service/${i+1}.jpg`, caption: 'Christmas Service' })) },
+    'community-outreach': { caption: 'Community Outreach', photos: Array.from({length: 4}, (_, i) => ({ imageUrl: `img/gallery/community-outreach/${i+1}.jpg`, caption: 'Community Outreach' })) },
+  };
+  function initStaticGalleryAlbums() {
+    document.querySelectorAll('#galleryGrid .gallery-tile[data-static-album]').forEach(tile => {
+      const album = staticGalleryAlbums[tile.dataset.staticAlbum];
+      if (!album) return;
+      tile.addEventListener('click', () => openLightbox(album.photos, 0));
+    });
+  }
+  initStaticGalleryAlbums();
 
   async function loadGallery() {
     try {
