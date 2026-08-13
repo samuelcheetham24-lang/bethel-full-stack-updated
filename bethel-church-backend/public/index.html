@@ -273,33 +273,36 @@
   /* ===== LIGHTBOX / ALBUM VIEWER ===== */
   .lightbox-overlay{
     display:none; position:fixed; inset:0; z-index:300;
-    background:rgba(15,11,22,0.94); align-items:center; justify-content:center;
-    padding:24px;
+    background:rgba(15,11,22,0.97); align-items:center; justify-content:center;
+    padding:0;
   }
   .lightbox-overlay.open{display:flex;}
-  .lightbox{max-width:900px; width:100%; display:flex; flex-direction:column; align-items:center;}
-  .lightbox-frame{position:relative; width:100%; display:flex; align-items:center; justify-content:center;}
-  .lightbox-frame img{max-width:100%; max-height:72vh; border-radius:10px; display:block; object-fit:contain;}
+  .lightbox{max-width:100%; width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:16px 76px;}
+  .lightbox-frame{position:relative; width:100%; height:100%; display:flex; align-items:center; justify-content:center;}
+  .lightbox-frame img{max-width:100%; max-height:88vh; border-radius:6px; display:block; object-fit:contain;}
   .lightbox-close{
-    position:absolute; top:-44px; right:0; background:none; border:none;
-    color:var(--cream); font-size:1.8rem; line-height:1; cursor:pointer;
+    position:fixed; top:20px; right:24px; background:none; border:none;
+    color:var(--cream); font-size:2.2rem; line-height:1; cursor:pointer; z-index:301;
   }
   .lightbox-nav{
-    position:absolute; top:50%; transform:translateY(-50%);
+    position:fixed; top:50%; transform:translateY(-50%);
     background:rgba(255,255,255,0.08); border:1px solid rgba(250,245,236,0.25);
-    color:var(--cream); width:44px; height:44px; border-radius:50%;
-    display:flex; align-items:center; justify-content:center; font-size:1.3rem;
-    cursor:pointer; transition:background 0.2s;
+    color:var(--cream); width:52px; height:52px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-size:1.5rem;
+    cursor:pointer; transition:background 0.2s; z-index:301;
   }
   .lightbox-nav:hover{background:rgba(255,255,255,0.18);}
-  .lightbox-prev{left:-8px;}
-  .lightbox-next{right:-8px;}
-  .lightbox-meta{margin-top:16px; text-align:center; color:var(--cream);}
+  .lightbox-prev{left:20px;}
+  .lightbox-next{right:20px;}
+  .lightbox-meta{position:fixed; bottom:22px; left:0; right:0; text-align:center; color:var(--cream); z-index:301;}
   .lightbox-meta .caption{font-family:'Cormorant Garamond',serif; font-size:1.2rem;}
   .lightbox-meta .counter{font-family:'JetBrains Mono',monospace; font-size:0.75rem; color:rgba(250,245,236,0.55); margin-top:4px;}
   @media (max-width:600px){
-    .lightbox-nav{width:44px; height:44px;}
-    .lightbox-prev{left:-4px;} .lightbox-next{right:-4px;}
+    .lightbox{padding:16px 8px;}
+    .lightbox-nav{width:44px; height:44px; font-size:1.2rem;}
+    .lightbox-prev{left:8px;} .lightbox-next{right:8px;}
+    .lightbox-close{top:12px; right:14px; font-size:1.8rem;}
+    .lightbox-frame img{max-height:78vh;}
   }
 
   /* ===== SERMON VIDEO MODAL ===== */
